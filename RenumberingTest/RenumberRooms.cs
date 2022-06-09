@@ -14,28 +14,7 @@ using System.IO;
 
 namespace RenumberingTest
 {
-    public class RoomPickFilter : ISelectionFilter
-    {
-        public bool AllowElement(Element elem)
-        {
-            Type elementType = elem.GetType();
-            if (elem.Category == null)
-            {
-                return false;
-            }
-            else
-            {
-                return (elem.Category.Id.IntegerValue.Equals((int)BuiltInCategory.OST_Rooms));
-            }
-            //return true;
-            
-        }
-
-        public bool AllowReference(Reference reference, XYZ position)
-        {
-            return false;
-        }
-    }
+    
 
     [Transaction(TransactionMode.Manual)]
     public class RenumberRooms : IExternalCommand
@@ -95,74 +74,92 @@ namespace RenumberingTest
             renumberPrefix = form.renumberPrefix;
             currentNumber = form.renumberStart;
             renumberInc = form.renumberInc;
+            int devRenumberSteps = 3;
+            int devCurrentStep = 1;
 
             Room selectedRoom;
 
             #endregion
 
-            #region Iterative Transactions
-            //having the user click to identify rooms to renumber based on set parameters
-            using (TransactionGroup transGroup = new TransactionGroup(doc))
+            while(continueSelecting)
             {
-                using (Transaction trans = new Transaction(doc))
+                #region Iterative Transactions
+                //having the user click to identify rooms to renumber based on set parameters
+                using (TransactionGroup transGroup = new TransactionGroup(doc))
                 {
-                    try
+                    using (Transaction trans = new Transaction(doc))
                     {
-                        transGroup.Start("Renumbered Rooms");
-                        trans.Start("Part One");
-
-                        RoomPickFilter selFilter = new RoomPickFilter();
-                        Reference pickedref = null;
-                        Selection sel = uiapp.ActiveUIDocument.Selection;
-                        pickedref = sel.PickObject(ObjectType.Element, selFilter, "Select a Room to Renumber");
-                        Element elem = doc.GetElement(pickedref);
-                        selectedRoom = elem as Room;
-
-                        //populating dictionary of rooms by room number for quick reference when renumbering
-                        Dictionary<string, List<Room>> roomDict = CreateRoomNumberDictionary();
-                        //string currentRoomNumber = selectedRoom.Number;
-                        bool numberExists = roomDict.ContainsKey(String.Concat(renumberPrefix, currentNumber));
-                        if (numberExists)
+                        try
                         {
-                            string addPrefix = "_";
-                            foreach (Room r in roomDict[String.Concat(renumberPrefix, currentNumber)])
+                            transGroup.Start("Renumbered Rooms");
+                            trans.Start("Part One");
+
+                            RoomPickFilter selFilter = new RoomPickFilter();
+                            Reference pickedref = null;
+                            Selection sel = uiapp.ActiveUIDocument.Selection;
+                            pickedref = sel.PickObject(ObjectType.Element, selFilter, "Select a Room to Renumber");
+                            Element elem = doc.GetElement(pickedref);
+                            selectedRoom = elem as Room;
+
+                            //populating dictionary of rooms by room number for quick reference when renumbering
+                            Dictionary<string, List<Room>> roomDict = CreateRoomNumberDictionary();
+                            //string currentRoomNumber = selectedRoom.Number;
+                            bool numberExists = roomDict.ContainsKey(String.Concat(renumberPrefix, currentNumber));
+                            if (numberExists)
                             {
-                                string roomNumber = r.Number;
-
-                                while (roomDict.ContainsKey(roomNumber))
+                                string addPrefix = "_";
+                                foreach (Room r in roomDict[String.Concat(renumberPrefix, currentNumber)])
                                 {
-                                    roomNumber = addPrefix + roomNumber;
+                                    string roomNumber = r.Number;
+
+                                    while (roomDict.ContainsKey(roomNumber))
+                                    {
+                                        roomNumber = addPrefix + roomNumber;
+                                    }
+                                    r.Number = roomNumber;
+                                    List<Room> newRoomList = new List<Room>();
+                                    newRoomList.Add(r);
+                                    roomDict.Add(roomNumber, newRoomList);
                                 }
-                                r.Number = roomNumber;
-                                List<Room> newRoomList = new List<Room>();
-                                newRoomList.Add(r);
-                                roomDict.Add(roomNumber, newRoomList);
                             }
-                        }
 
-                        if (trans.Commit() != TransactionStatus.Committed)
+                            if (trans.Commit() != TransactionStatus.Committed)
+                            {
+                                return Result.Failed;
+                            }
+
+                            trans.Start("Part Two");
+                            selectedRoom.Number = String.Concat(renumberPrefix, currentNumber);
+
+                            if (trans.Commit() != TransactionStatus.Committed)
+                            {
+                                return Result.Failed;
+                            }
+
+                            transGroup.Assimilate();
+                        }
+                        catch (Autodesk.Revit.Exceptions.OperationCanceledException)
                         {
+                            continueSelecting = false;
+                            transGroup.Assimilate();
+                            return Result.Succeeded;
+                        }
+                        catch
+                        {
+                            continueSelecting = false;
                             return Result.Failed;
                         }
-
-                        trans.Start("Part Two");
-                        selectedRoom.Number = String.Concat(renumberPrefix, currentNumber);
-
-                        if(trans.Commit() != TransactionStatus.Committed)
-                        {
-                            return Result.Failed;
-                        }
-
-                        transGroup.Assimilate();
                     }
-                    catch
-                    {
-                        return Result.Failed;
-                    }
+
                 }
-                
+                #endregion
+                devCurrentStep += 1;
+                currentNumber += renumberInc;
             }
-            #endregion
+            
+            
+
+            
 
             return Result.Succeeded;
         }

@@ -136,6 +136,11 @@ namespace RenumberingTest
             // 
             this.startData.Font = new System.Drawing.Font("Roboto", 11F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.startData.Location = new System.Drawing.Point(277, 88);
+            this.startData.Maximum = new decimal(new int[] {
+            10000,
+            0,
+            0,
+            0});
             this.startData.Name = "startData";
             this.startData.Size = new System.Drawing.Size(64, 25);
             this.startData.TabIndex = 10;
