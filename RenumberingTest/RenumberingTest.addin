@@ -1,0 +1,13 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<RevitAddIns>
+  <AddIn Type="Application">
+    <Name>Renumbering Test</Name>
+    <FullClassName>RenumberingTest.App</FullClassName>
+    <Assembly>
+      C:\Users\dschipper\source\repos\RenumberingTest\RenumberingTest\bin\Debug\RenumberingTest.dll
+    </Assembly>
+    <AddInId>e2011457-1546-43c5-a5fe-008deee3d3f0</AddInId>
+    <VendorId>Cuningham</VendorId>
+    <VendorDescription>Cuningham Group Architecture, Inc. (www.cuningham.com)</VendorDescription>
+  </AddIn>
+</RevitAddIns>

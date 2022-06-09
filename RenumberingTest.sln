@@ -1,0 +1,25 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 16
+VisualStudioVersion = 16.0.32510.428
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RenumberingTest", "RenumberingTest\RenumberingTest.csproj", "{B69E5F0A-D8FE-4985-B07D-D938B1FDAC7D}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{B69E5F0A-D8FE-4985-B07D-D938B1FDAC7D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{B69E5F0A-D8FE-4985-B07D-D938B1FDAC7D}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{B69E5F0A-D8FE-4985-B07D-D938B1FDAC7D}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{B69E5F0A-D8FE-4985-B07D-D938B1FDAC7D}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {1AF9FB7D-9932-4BFA-896C-46F76D7D2F04}
+	EndGlobalSection
+EndGlobal
